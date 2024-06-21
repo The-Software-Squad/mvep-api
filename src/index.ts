@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 // Get the env variables.
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 
 // Define the express app.
 const app = express();
