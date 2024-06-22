@@ -1,3 +1,4 @@
+
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -7,25 +8,26 @@ import { connectDB } from "./services/database-service";
 import SudoUserRouter from "./routes/sudouser.route";
 import SudoUser from "./models/sudouser.model";
 import { default_super_admin_caps } from "./constants/capabilities";
+
 // Get the env variables.
 const PORT = process.env.PORT || 4000;
 
 // Define the express app.
 const app = express();
 
-(async function(){
+// (async function(){
      
-  const root  = await SudoUser.create({
-     name : "root",
-     email : "root@gmail.com",
-     phone_number : "9812737891",
-     password : "12345",
-     capabilities : default_super_admin_caps,
-     role:1,
-     createdBy :"root"
-  });
+//   const root  = await SudoUser.create({
+//      name : "root",
+//      email : "root@gmail.com",
+//      phone_number : "9812737891",
+//      password : "12345",
+//      capabilities : default_super_admin_caps,
+//      role:1,
+//      createdBy :"root"
+//   });
 
-})()
+// })()
 
 // Add the middlewares.
 app.use(cors());
@@ -33,8 +35,8 @@ app.use(cookieParser());
 app.use(express.json());
 
 // Add the routes.
-app.get("/", (req, res) => {
-  res.send("MVEP API");
+app.get('/', (req, res) => {
+  res.send('MVEP API');
 });
 
 app.use("/api/sudo-users/" , SudoUserRouter);
