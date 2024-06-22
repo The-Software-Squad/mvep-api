@@ -17,13 +17,14 @@ app.use(cookieParser());
 app.use(express.json());
 
 // Add the routes.
-app.get("/", (req, res) => {
-  res.send("MVEP API");
+app.get('/', (req, res) => {
+  res.send('MVEP API');
 });
 //user routes
 app.use('/api', userRouter)
 
 connectDB();
 app.listen(PORT, () => {
+  connectDB();
   console.log(`Server started at ${PORT}`);
 });
