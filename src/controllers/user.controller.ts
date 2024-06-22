@@ -63,6 +63,26 @@ export const createUser = async (req: Request, res: Response) => {
 //update user
 export const updateUser = async (req: Request, res: Response) => {
     try {
+        const userId = req?.params?.id;
+        const { name, email, phoneNumber, cart, wishlist, addresses } = req.body;
+        const validUser = await User.findById(userId);
+        if (!validUser) {
+            return res.status(404).send({ 'message': 'No User Found' });
+        }
+        await User.findByIdAndUpdate(userId, {
+            name: name,
+            email: email,
+            phoneNumber: phoneNumber,
+            cart: cart,
+            wishlist: wishlist,
+            addresses: addresses
+        })
+            .then((data) => {
+                return res.status(200).send({ 'message': 'Updated Successfull' })
+            })
+            .catch((err) => {
+                return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
+            })
 
     } catch (err) {
         return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
@@ -71,7 +91,13 @@ export const updateUser = async (req: Request, res: Response) => {
 //delete user 
 export const deleteUser = async (req: Request, res: Response) => {
     try {
-
+        const userId = req?.params?.id;
+        const validUser = await User.findById(userId);
+        if (!validUser) {
+            return res.status(404).send({ 'message': 'No User Found' });
+        }
+        await validUser?.deleteOne();
+        return res.status(200).send({ 'message': 'Deleted Successfull' });
     } catch (err) {
         return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
     }
