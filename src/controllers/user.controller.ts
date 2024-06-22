@@ -70,14 +70,17 @@ export const updateUser = async (req: Request, res: Response) => {
         if (!validUser) {
             return res.status(404).send({ 'message': 'No User Found' });
         }
+        const updatedCart = cart ? [...validUser.cart, ...cart] : validUser.cart;
+        const updatedWishlist = wishlist ? [...validUser.wishlist, ...wishlist] : validUser.wishlist;
+        const updatedAddresses = addresses ? [...validUser.addresses, ...addresses] : validUser.addresses;
         await User.findByIdAndUpdate(userId, {
             name: name,
             email: email,
             phoneNumber: phoneNumber,
-            cart: cart,
-            wishlist: wishlist,
-            addresses: addresses
-        })
+            cart: updatedCart,
+            wishlist: updatedWishlist,
+            addresses: updatedAddresses
+        }, { new: true })
             .then((data) => {
                 return res.status(200).send({ 'message': 'Updated Successfull' })
             })
@@ -129,7 +132,10 @@ export const loginUser = async (req: Request, res: Response) => {
 //logout user
 export const logoutUser = async (req: Request, res: Response) => {
     try {
-
+        return res.clearCookie('token', {
+            httpOnly: true,
+            sameSite: 'strict'
+        }).status(200).send({ 'message': 'Logout Successfull' })
     } catch (err) {
         return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
     }
@@ -138,8 +144,49 @@ export const logoutUser = async (req: Request, res: Response) => {
 //forgot password
 export const forgotPassword = async (req: Request, res: Response) => {
     try {
+        const { email } = req.body;
+        const validUser = await User.findOne({ email: email });
+        if (!validUser) {
+            return res.status(404).send({ 'message': 'No User Found' });
+        }
+        //@ts-ignore
+        const token = jwt.sign({ userId: validUser._id, email: validUser.email }, process.env.JWT_SECRET, { expiresIn: '10min' })
+
+        console.log(token)
+
+        //sending the link to email
+        return res.status(200).send({ 'message': 'Password Reset Link Sent Successfull' });
 
     } catch (err) {
+        return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
+    }
+}
+//reset password
+export const changePassword = async (req: Request, res: Response) => {
+    try {
+        const { password } = req.body;
+        //@ts-ignore
+        const { email } = req.user;
+
+        if (!email) {
+            return res.status(404).send({ 'message': 'Email Required' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await User.findOneAndUpdate(
+            { email },
+            { password: hashedPassword },
+            { new: true }
+        ).then((data) => {
+            return res.status(200).send('Password Reset Successfull');
+        })
+            .catch(err => {
+                console.log(err);
+                return res.status(500).send({ error: err })
+            })
+
+    }
+    catch (err) {
         return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
     }
 }
