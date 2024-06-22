@@ -1,5 +1,5 @@
 import express from "express";
-import { changePassword, createUser, deleteUser, forgotPassword, getAllUsers, getUserById, loginUser, logoutUser, updateUser } from "../controllers/user.controller";
+import { changePassword, createUser, deleteUser, forgotPassword, getAllUsers, getUserById, loginUser, logoutUser, updateUser } from "../controllers/user-controller";
 import { verifyAuth } from "../middleware/verify.middleware";
 import { verifyPasswordReset } from "../middleware/forgot.middleware";
 
