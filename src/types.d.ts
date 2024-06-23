@@ -27,6 +27,7 @@ export interface UpdateSudoUserDto{
     capabilities  :string[];
 }
 
+
 export interface LoginSudoUserDto{
      email : string;
      password: string;
@@ -35,6 +36,5 @@ export interface LoginSudoUserDto{
 //Param Types
 
 export interface SudoUserParam {
-    
      id:string
-}
+};

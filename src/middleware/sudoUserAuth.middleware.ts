@@ -18,9 +18,7 @@ function sudoUserProtectMiddleWare(req:Request , res:Response , next:NextFunctio
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as  jwt.JwtPayload;
         req.loggedInSudoUserId = decoded.userId as string; 
-        logger.info("before the protect middleware end");
         next();
-        logger.info("after the protect middleware end");
         return;
       } catch (error) {
           res.status(400);

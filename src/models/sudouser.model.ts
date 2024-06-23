@@ -55,6 +55,17 @@ const sudoUserSchema = new mongoose.Schema<ISudoUser>(
   { timestamps: true }
 );
 
+sudoUserSchema.index({ role: 1 });
+
+// sudoUserSchema.pre('find', function() {
+//   (this as any)._startTime = Date.now();
+// });
+
+// sudoUserSchema.post('find', function() {
+//   if ((this as any)._startTime != null) {
+//     console.log('Runtime in MS: ', Date.now() - (this as any)._startTime);
+//   }
+// });
 sudoUserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();

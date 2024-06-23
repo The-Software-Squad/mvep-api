@@ -5,9 +5,10 @@ import {
 } from "../types";
 import { Request, Response } from "express-serve-static-core";
 import expressAsyncHandler = require("express-async-handler");
-import SudoUser from "../models/sudouser.model";
+import SudoUser, { ISudoUser } from "../models/sudouser.model";
 import generateJwtToken from "../utils/generateToken";
 import getDefaultCapabilitiesByRole from "../utils/getCapabilitiesByRole";
+import logger from "../utils/logger";
 
 /**
  * login sudo user controller method will be able to set token to in cookies if user hit , Route : POST  /api/sudo-user/login  , access_level : public
@@ -43,16 +44,40 @@ export const login = expressAsyncHandler(
 
 /**
  * Read All Sudo User based on sudo users role , route :  GET /api/sudo-user/ access_level : private
- * 
+ *
  * @param {Request} req Express Request Object
  * @param {Response} res Express Response Object
  */
 export const getAllSudoUsers = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const allSudoUsers = await SudoUser.find({});
+    const loggedInSudoUsersCreations = await SudoUser.find({createdBy:req.loggedInSudoUserId});
+    let sudousers: ISudoUser[] = [];
+    // if (loggedInUser?.role === 1) {
+    //   sudousers = await SudoUser.find({}).sort({ role: 1 }).select("-password");
+    //   res.json({
+    //     sudousers: sudousers,
+    //   });
+    //   return;
+    // } else if (loggedInUser?.role === 2) {
+    //   sudousers = await SudoUser.find({ role: { $nin: [1] } })
+    //     .sort({ role: 1 })
+    //     .select("-password");
+    // } else if (loggedInUser?.role === 3) {
+    //   sudousers = await SudoUser.find({ role: { $in: [3, 4] } })
+    //     .sort({ role: 1 })
+    //     .select("-password");
+    // } else if (loggedInUser?.role === 4) {
+    //   sudousers = await SudoUser.find({ role: 4 })
+    //     .sort({ role: 1 })
+    //     .select("-password");
+    // } else {
+    //   res.status(400);
+    //   throw new Error("Invalid User Role");
+    // }
+
     res.status(200);
     res.json({
-      sudousers: allSudoUsers,
+      sudousers: loggedInSudoUsersCreations,
     });
     return;
   }
@@ -60,7 +85,7 @@ export const getAllSudoUsers = expressAsyncHandler(
 
 /**
  * get sudo_user by id if and only if logged in sudo_user has read access to the sudo_user he want to read , Route : GET /api/sudo-user/:{id} , path_paramenter : id ,access_level :  private
- * 
+ *
  * @param {Request} req Express Request Object
  * @param {Response} res Express Response Object
  */
@@ -81,7 +106,7 @@ export const getSudoUserById = expressAsyncHandler(
 
 /**
  * This controller method is used to create a sudo_user by an other sudo_user who have an valid role ,  Route :  POST  /api/sudo-user/:id  , access_level : private
- * 
+ *
  * @param {Request} req  Express Request Object
  * @param {Response} res Express Response Object
  */
@@ -92,6 +117,7 @@ export const createSudoUser = expressAsyncHandler(
     const foundSudoUser = await SudoUser.findOne({ email: email });
     if (foundSudoUser) {
       res.status(400);
+      logger.error("User Already Error");
       throw new Error("User Already Exists");
     }
     const defaultCapabilites = getDefaultCapabilitiesByRole(role);
@@ -116,9 +142,9 @@ export const createSudoUser = expressAsyncHandler(
 
 /**
  * update sudo_user by _id property of sudo_user and to delete a sudo_user , logged in sudo_user should be of appropriate role , route : PUT /api/sudo-user/:id , access_level : private
- * 
- * @param {express.Request} req Express Request Object
- * @param {express.Response} res Express Response Object
+ *
+ * @param {Request} req Express Request Object
+ * @param {Response} res Express Response Object
  */
 export const updateSudoUserById = expressAsyncHandler(
   async (
@@ -155,14 +181,15 @@ export const updateSudoUserById = expressAsyncHandler(
         capabilities: capabilities,
       },
     });
+    return;
   }
 );
 
 /**
  * delete sudo_user by _id property of sudo_user and to delete a sudo_user , logged in sudo_user should be of appropriate role , route : DELETE /api/sudousers/:id , access_level : private
- * 
- * @param {express.Request} req Express Request Object
- * @param {express.Response} res Express Response Object
+ *
+ * @param {Request} req Express Request Object
+ * @param {Response} res Express Response Object
  */
 export const deleteSudoUserById = expressAsyncHandler(
   async (req: Request<{ id: string }, {}, {}>, res: Response) => {
@@ -188,14 +215,12 @@ export const deleteSudoUserById = expressAsyncHandler(
   }
 );
 
-export const logoutSudoUser = expressAsyncHandler(
-  async ( _ , res: Response) => {
-    res
-      .clearCookie("sudo_user_auth_jwt", {
-        httpOnly: true,
-        sameSite: "strict",
-      })
-      .status(200)
-      .send({ message: "Logout Successfull" });
-  }
-);
+export const logoutSudoUser = expressAsyncHandler(async (_, res: Response) => {
+  res
+    .clearCookie("sudo_user_auth_jwt", {
+      httpOnly: true,
+      sameSite: "strict",
+    })
+    .status(200)
+    .send({ message: "Logout Successfull" });
+});

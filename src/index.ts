@@ -1,4 +1,3 @@
-
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -9,8 +8,9 @@ import SudoUserRouter from "./routes/sudouser.route";
 
 // Get the env variables.
 import {config} from "dotenv"
+
 config();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 // Define the express app.
 const app = express();

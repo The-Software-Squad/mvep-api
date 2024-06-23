@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import logger from "../utils/logger";
 
 /** when API got hit with unknown Request URL This not Found Middleware will come in action
  * 
@@ -25,6 +26,7 @@ export function errorMiddleWare(err : any, req:Request, res:Response, next:NextF
     let statusCode = res.statusCode ===200 ? 500 : res.statusCode;
     
     let message = err.message;
+     logger.info("Caught By Middle Ware")
         
     if (err.name === "CastError" && err.kind === "ObjectId") {
         statusCode = 404;
