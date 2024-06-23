@@ -270,7 +270,7 @@ export const changePassword = async (req: Request, res: Response) => {
             { password: hashedPassword },
             { new: true }
         ).then((data) => {
-            return res.status(200).send('Password Reset Successfull');
+            return res.status(200).send({ 'message': 'Password Reset Successfull' });
         })
             .catch(err => {
                 console.log(err);
