@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { notFound,errorMiddleWare } from "./middleware/error.middleware";
+import { notFound,errorMiddleWare } from "./middleware/error-middleware";
 import logger from "./utils/logger";
 import { connectDB } from "./services/database-service";
-import SudoUserRouter from "./routes/sudouser.route";
+import SudoUserRouter from "./routes/sudouser-route";
 
 // Get the env variables.
 import {config} from "dotenv"

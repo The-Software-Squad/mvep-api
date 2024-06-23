@@ -1,7 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import { Request, Response, NextFunction } from "express-serve-static-core";
 import { CreateSudoUserDto, UpdateSudoUserDto } from "../types";
-import SudoUser from "../models/sudouser.model";
+import SudoUser from "../models/sudouser-model";
 /**
  * This Middleware Prevents any Operation preformed on higher role from Lower Role (Higher Role : lesser role number , lower Role : Higher Role Number)
  * @param {Request} req

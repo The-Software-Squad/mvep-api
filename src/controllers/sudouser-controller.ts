@@ -5,7 +5,7 @@ import {
 } from "../types";
 import { Request, Response } from "express-serve-static-core";
 import expressAsyncHandler = require("express-async-handler");
-import SudoUser, { ISudoUser } from "../models/sudouser.model";
+import SudoUser, { ISudoUser } from "../models/sudouser-model";
 import generateJwtToken from "../utils/generateToken";
 import getDefaultCapabilitiesByRole from "../utils/getCapabilitiesByRole";
 import logger from "../utils/logger";

@@ -1,8 +1,8 @@
 import { Request,Response,NextFunction } from "express-serve-static-core";
-import SudoUser from "../models/sudouser.model";
+import SudoUser from "../models/sudouser-model";
 import expressAsyncHandler from "express-async-handler";
 
-async function DeleteProtectMiddleWare(
+async function roleCapacityIDMiddleware(
   req: Request<{ id: string }>,
   res: Response,
   next: NextFunction
@@ -22,4 +22,4 @@ async function DeleteProtectMiddleWare(
  
 }
 
-export default expressAsyncHandler(DeleteProtectMiddleWare);
+export default expressAsyncHandler(roleCapacityIDMiddleware);
