@@ -11,7 +11,6 @@ import jwt from "jsonwebtoken"
  * 
  * @returns {Promise<void>} Returns a promise that resolves to void.
  */
-
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
         await User.find()
@@ -35,7 +34,6 @@ export const getAllUsers = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-
 export const getUserById = async (req: Request, res: Response) => {
     try {
         const userID = req.params?.id;
@@ -62,7 +60,6 @@ export const getUserById = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-
 export const createUser = async (req: Request, res: Response) => {
     try {
         const { name, email, password, phoneNumber, cart, wishlist, addresses } = req.body;
@@ -101,7 +98,6 @@ export const createUser = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-
 export const updateUser = async (req: Request, res: Response) => {
     try {
         const userId = req?.params?.id;
@@ -142,7 +138,6 @@ export const updateUser = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-
 export const deleteUser = async (req: Request, res: Response) => {
     try {
         const userId = req?.params?.id;
@@ -167,7 +162,6 @@ export const deleteUser = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-
 export const loginUser = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
@@ -200,7 +194,6 @@ export const loginUser = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-
 export const logoutUser = async (req: Request, res: Response) => {
     try {
         return res.clearCookie('token', {
@@ -222,7 +215,6 @@ export const logoutUser = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-
 export const forgotPassword = async (req: Request, res: Response) => {
     try {
         const { email } = req.body;
@@ -253,7 +245,6 @@ export const forgotPassword = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-
 export const changePassword = async (req: Request, res: Response) => {
     try {
         const { password } = req.body;
