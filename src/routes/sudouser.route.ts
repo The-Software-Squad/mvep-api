@@ -4,14 +4,20 @@ import {
   deleteSudoUserById,
   getAllSudoUsers,
   getSudoUserById,
+  login,
+  logoutSudoUser,
   updateSudoUserById,
 } from "../controllers/sudouser.controller";
+import sudoUserAuthMiddleware from "../middleware/sudoUserAuth.middleware";
+import roleCapacityMiddleware from "../middleware/roleCapacity.middleware";
 const SudoUserRouter = express.Router();
 
-SudoUserRouter.get("/", getAllSudoUsers);
-SudoUserRouter.post("/", createSudoUser);
-SudoUserRouter.get("/:id", getSudoUserById);
-SudoUserRouter.put("/:id", updateSudoUserById);
-SudoUserRouter.delete("/:id", deleteSudoUserById);
+SudoUserRouter.get("/", sudoUserAuthMiddleware , getAllSudoUsers);
+SudoUserRouter.post("/", sudoUserAuthMiddleware,roleCapacityMiddleware,createSudoUser);
+SudoUserRouter.post("/login" ,login);
+SudoUserRouter.post("/logout" , logoutSudoUser);
+SudoUserRouter.get("/:id", sudoUserAuthMiddleware ,getSudoUserById);
+SudoUserRouter.put("/:id",sudoUserAuthMiddleware, roleCapacityMiddleware,updateSudoUserById);
+SudoUserRouter.delete("/:id", sudoUserAuthMiddleware ,deleteSudoUserById);
 
 export default SudoUserRouter;

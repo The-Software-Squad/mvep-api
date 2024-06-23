@@ -1,6 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 
-
+/** when API got hit with unknown Request URL This not Found Middleware will come in action
+ * 
+ * @param {Request} req Express Request Object
+ * @param {Response} res Express Response Object
+ * @param {NextFunction} next Express Next Function
+ */
 export function notFound(req:Request , res:Response , next: NextFunction){
     
     const error = new Error("not Found - " + req.originalUrl);
@@ -8,6 +13,14 @@ export function notFound(req:Request , res:Response , next: NextFunction){
     next(error);
 };
 
+/**
+ * This is the Error Middleware that will be going to override the  default middleware 
+ * 
+ * @param {ErrorRequestHandler} err Express Error Request Handler
+ * @param {Request} req Express Request Handler
+ * @param {Response} res Express Response Handler
+ * @param {NextFunction} next Express Next Function
+ */
 export function errorMiddleWare(err : any, req:Request, res:Response, next:NextFunction){
     let statusCode = res.statusCode ===200 ? 500 : res.statusCode;
     

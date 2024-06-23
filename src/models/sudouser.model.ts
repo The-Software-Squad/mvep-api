@@ -43,6 +43,10 @@ const sudoUserSchema = new mongoose.Schema<ISudoUser>(
       required: true,
       default: 4,
     },
+    capabilities :{
+       type : [String],
+       required:true
+    },
     createdBy: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: "sudouser",
