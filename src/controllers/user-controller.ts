@@ -236,7 +236,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
         console.log(token)
 
         //sending the link to email
-        return res.status(200).send({ 'message': 'Password Reset Link Sent Successfull' });
+        return res.status(200).send({ 'message': 'Password Reset Link Sent Successfull', token: token });
 
     } catch (err) {
         return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
