@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./config/dbConfig";
-import userRouter from "./routes/user.route";
+import userRouter from "./routes/user-route";
 import 'dotenv/config'
 
 // Get the env variables.
