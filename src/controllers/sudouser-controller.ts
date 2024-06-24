@@ -34,10 +34,10 @@ export const login = expressAsyncHandler(
     }
     generateJwtToken(res, foundSudoUser);
     res.status(200);
-    res.json({
+    res.json({ data :{
       email: foundSudoUser.email,
       state: "Logged in",
-    });
+    }});
     return;
   }
 );
@@ -77,7 +77,7 @@ export const getAllSudoUsers = expressAsyncHandler(
 
     res.status(200);
     res.json({
-      sudousers: loggedInSudoUsersCreations,
+      data: loggedInSudoUsersCreations,
     });
     return;
   }
@@ -99,7 +99,7 @@ export const getSudoUserById = expressAsyncHandler(
       throw new Error("User Not Found With That Request ID");
     }
     res.status(200);
-    res.json({ sudouser: sudoUserWithRequestedId });
+    res.json({ data: sudoUserWithRequestedId });
     return;
   }
 );
@@ -132,10 +132,10 @@ export const createSudoUser = expressAsyncHandler(
     });
 
     res.status(200);
-    res.json({
+    res.json({ data : {
       name: createdSudoUser.name,
       email: createdSudoUser.email,
-    });
+    }});
     return;
   }
 );
@@ -173,7 +173,7 @@ export const updateSudoUserById = expressAsyncHandler(
     }
     res.status(200);
     res.json({
-      updatedsudouser: {
+      data: {
         name: name,
         email: email,
         phone_number: phone_number,
@@ -208,7 +208,7 @@ export const deleteSudoUserById = expressAsyncHandler(
     }
     res.status(200);
     res.json({
-      deleted: {
+      data: {
         deletedSudoUser,
       },
     });
