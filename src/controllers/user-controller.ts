@@ -15,7 +15,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
     try {
         await User.find()
             .then((data) => {
-                return res.status(200).send({ result: data })
+                return res.status(200).send({ result: { data: data } })
             })
             .catch((err) => {
                 return res.status(400).send({ error: 'Internal Server Error', errorMsg: err })
@@ -44,7 +44,7 @@ export const getUserById = async (req: Request, res: Response) => {
         if (!fetchedUser) {
             return res.status(404).send({ error: 'User Not Found' })
         }
-        return res.status(200).send({ result: fetchedUser })
+        return res.status(200).send({ result: { data: fetchedUser } })
     } catch (err) {
         return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
     }
