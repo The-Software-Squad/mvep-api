@@ -15,7 +15,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
     try {
         await User.find()
             .then((data) => {
-                return res.status(200).send({ users: data })
+                return res.status(200).send({ result: data })
             })
             .catch((err) => {
                 return res.status(400).send({ error: 'Internal Server Error', errorMsg: err })
@@ -44,7 +44,7 @@ export const getUserById = async (req: Request, res: Response) => {
         if (!fetchedUser) {
             return res.status(404).send({ error: 'User Not Found' })
         }
-        return res.status(200).send({ 'user': fetchedUser })
+        return res.status(200).send({ result: fetchedUser })
     } catch (err) {
         return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
     }
@@ -65,7 +65,7 @@ export const createUser = async (req: Request, res: Response) => {
         const { name, email, password, phoneNumber, cart, wishlist, addresses } = req.body;
         const isExists = await User.findOne({ email: email });
         if (isExists) {
-            return res.status(402).send({ 'message': 'User Already Exists' });
+            return res.status(402).send({ result: { 'message': 'User Already Exists' } });
         }
         const hashedPassword = await bcrypt.hash(password, 10)
         const newUser = new User({
@@ -78,7 +78,7 @@ export const createUser = async (req: Request, res: Response) => {
             addresses: addresses,
         })
         await newUser.save().then((data) => {
-            return res.status(201).send({ 'message': 'User Created Successfull' })
+            return res.status(201).send({ result: { 'message': 'User Created Successfull' } })
         })
             .catch((err) => {
                 return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
@@ -104,7 +104,7 @@ export const updateUser = async (req: Request, res: Response) => {
         const { name, email, phoneNumber, cart, wishlist, addresses } = req.body;
         const validUser = await User.findById(userId);
         if (!validUser) {
-            return res.status(404).send({ 'message': 'No User Found' });
+            return res.status(404).send({ result: { 'message': 'No User Found' } });
         }
         const updatedCart = cart ? [...validUser.cart, ...cart] : validUser.cart;
         const updatedWishlist = wishlist ? [...validUser.wishlist, ...wishlist] : validUser.wishlist;
@@ -118,7 +118,7 @@ export const updateUser = async (req: Request, res: Response) => {
             addresses: updatedAddresses
         }, { new: true })
             .then((data) => {
-                return res.status(200).send({ 'message': 'Updated Successfull' })
+                return res.status(200).send({ result: { 'message': 'Updated Successfull' } })
             })
             .catch((err) => {
                 return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
@@ -143,10 +143,10 @@ export const deleteUser = async (req: Request, res: Response) => {
         const userId = req?.params?.id;
         const validUser = await User.findById(userId);
         if (!validUser) {
-            return res.status(404).send({ 'message': 'No User Found' });
+            return res.status(404).send({ result: { 'message': 'No User Found' } });
         }
         await validUser?.deleteOne();
-        return res.status(200).send({ 'message': 'Deleted Successfull' });
+        return res.status(200).send({ result: { 'message': 'Deleted Successfull' } });
     } catch (err) {
         return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
     }
@@ -167,7 +167,7 @@ export const loginUser = async (req: Request, res: Response) => {
         const { email, password } = req.body;
         const validUser = await User.findOne({ email: email });
         if (!validUser) {
-            return res.status(404).send({ 'message': 'No User Found' });
+            return res.status(404).send({ result: { 'message': 'No User Found' } });
         }
         const isPasswordValid = await bcrypt.compare(password, validUser.password);
         if (!isPasswordValid) {
@@ -179,7 +179,7 @@ export const loginUser = async (req: Request, res: Response) => {
             httpOnly: true,
             sameSite: 'strict',
             maxAge: 24 * 60 * 60 * 1000
-        }).status(200).send({ "message": "Login Successfull" });
+        }).status(200).send({ result: { "message": "Login Successfull" } });
     } catch (err) {
         return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
     }
@@ -199,7 +199,7 @@ export const logoutUser = async (req: Request, res: Response) => {
         return res.clearCookie('token', {
             httpOnly: true,
             sameSite: 'strict'
-        }).status(200).send({ 'message': 'Logout Successfull' })
+        }).status(200).send({ result: { 'message': 'Logout Successfull' } })
     } catch (err) {
         return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
     }
@@ -220,7 +220,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
         const { email } = req.body;
         const validUser = await User.findOne({ email: email });
         if (!validUser) {
-            return res.status(404).send({ 'message': 'No User Found' });
+            return res.status(404).send({ result: { 'message': 'No User Found' } });
         }
         //@ts-ignore
         const token = jwt.sign({ userId: validUser._id, email: validUser.email }, process.env.JWT_SECRET, { expiresIn: '10min' })
@@ -228,7 +228,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
         console.log(token)
 
         //sending the link to email
-        return res.status(200).send({ 'message': 'Password Reset Link Sent Successfull', token: token });
+        return res.status(200).send({ result: { 'message': 'Password Reset Link Sent Successfull', token: token } });
 
     } catch (err) {
         return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
@@ -252,7 +252,7 @@ export const changePassword = async (req: Request, res: Response) => {
         const { email } = req.user;
 
         if (!email) {
-            return res.status(404).send({ 'message': 'Email Required' });
+            return res.status(404).send({ result: { 'message': 'Email Required' } });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -261,7 +261,7 @@ export const changePassword = async (req: Request, res: Response) => {
             { password: hashedPassword },
             { new: true }
         ).then((data) => {
-            return res.status(200).send({ 'message': 'Password Reset Successfull' });
+            return res.status(200).send({ result: { 'message': 'Password Reset Successfull' } });
         })
             .catch(err => {
                 console.log(err);
