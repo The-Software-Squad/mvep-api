@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 //user routes
 app.use('/api', userRouter)
 
-connectDB();
+
 app.listen(PORT, () => {
   connectDB();
   console.log(`Server started at ${PORT}`);
