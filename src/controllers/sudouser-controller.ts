@@ -39,10 +39,12 @@ export const login = expressAsyncHandler(
     }
     generateJwtToken(res, foundSudoUser);
     res.status(200);
-    res.json({ data :{
-      email: foundSudoUser.email,
-      state: "Logged in",
-    }});
+    res.json({
+      data: {
+        email: foundSudoUser.email,
+        state: "Logged in",
+      },
+    });
     return;
   }
 );
@@ -55,7 +57,9 @@ export const login = expressAsyncHandler(
  */
 export const getAllSudoUsers = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    const loggedInSudoUsersCreations = await SudoUser.find({createdBy:req.loggedInSudoUserId});
+    const loggedInSudoUsersCreations = await SudoUser.find({
+      createdBy: req.loggedInSudoUserId,
+    });
     let sudousers: ISudoUser[] = [];
     // if (loggedInUser?.role === 1) {
     //   sudousers = await SudoUser.find({}).sort({ role: 1 }).select("-password");
@@ -137,10 +141,12 @@ export const createSudoUser = expressAsyncHandler(
     });
 
     res.status(200);
-    res.json({ data : {
-      name: createdSudoUser.name,
-      email: createdSudoUser.email,
-    }});
+    res.json({
+      data: {
+        name: createdSudoUser.name,
+        email: createdSudoUser.email,
+      },
+    });
     return;
   }
 );
@@ -230,46 +236,50 @@ export const logoutSudoUser = expressAsyncHandler(async (_, res: Response) => {
     .send({ message: "Logout Successfull" });
 });
 
-
-
-export const forgetPassword = expressAsyncHandler(async(req:Request<{} ,{} ,forgetPasswordDto> , res:Response)=>{
-  const {email} = req.body;
-  const validUser = await SudoUser.findOne({ email: email });
-  if(!validUser){
-     res.status(400);
-     throw new Error("No SudoUser Has Found");
-  }
-  const link = generateForgotPasswordLink(validUser);
-  sendForgotPasswordMail(email , link);
-  res.json({
-    data : {
-       status : "email sent successfully"
-    }
-  });
-});
-
-export const resetPassword = expressAsyncHandler(async(req : Request<{},{},ResetPasswordDto> , res:Response)=>{
-     const {token , password , verify_password } = req.body;
-     if(!token){
-        throw new Error("token does not exist");
-     }
-     let decoded;
-     try{
-       decoded = jwt.verify(token ,process.env.JWT_SECRET!) as jwt.JwtPayload;
-     }catch(e){
+export const forgetPassword = expressAsyncHandler(
+  async (req: Request<{}, {}, forgetPasswordDto>, res: Response) => {
+    const { email } = req.body;
+    const validUser = await SudoUser.findOne({ email: email });
+    if (!validUser) {
       res.status(400);
-      throw new Error("Invalid token")
-     }
-     if(verify_password!==password){
+      throw new Error("No SudoUser Has Found");
+    }
+    const link = generateForgotPasswordLink(validUser);
+    sendForgotPasswordMail(email, link);
+    res.json({
+      data: {
+        status: "email sent successfully",
+      },
+    });
+  }
+);
+
+export const resetPassword = expressAsyncHandler(
+  async (req: Request<{}, {}, ResetPasswordDto>, res: Response) => {
+    const { token, password, verify_password } = req.body;
+    if (!token) {
+      throw new Error("token does not exist");
+    }
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload;
+    } catch (e) {
+      res.status(400);
+      throw new Error("Invalid token");
+    }
+    if (verify_password !== password) {
       res.status(400);
       throw new Error("Please re verify the password");
-     }
-     const sudouserId = decoded.sudouser_id;
-     const sudouser = await SudoUser.findByIdAndUpdate( sudouserId, {password:password});
-     res.json({
-      data:{
-         email :sudouser?.email,
-         update : true
-      }
-     });
-});
+    }
+    const sudouserId = decoded.sudouser_id;
+    const sudouser = await SudoUser.findByIdAndUpdate(sudouserId, {
+      password: password,
+    });
+    res.json({
+      data: {
+        email: sudouser?.email,
+        update: true,
+      },
+    });
+  }
+);
