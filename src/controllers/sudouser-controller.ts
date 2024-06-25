@@ -2,6 +2,7 @@ import {
   CreateSudoUserDto,
   LoginSudoUserDto,
   UpdateSudoUserDto,
+  forgetPasswordDto,
 } from "../types";
 import { Request, Response } from "express-serve-static-core";
 import expressAsyncHandler = require("express-async-handler");
@@ -9,6 +10,8 @@ import SudoUser, { ISudoUser } from "../models/sudouser-model";
 import generateJwtToken from "../utils/generateToken";
 import getDefaultCapabilitiesByRole from "../utils/getCapabilitiesByRole";
 import logger from "../utils/logger";
+import generateForgotPasswordLink from "../utils/genrateForgetPasswordLink";
+import { sendForgotPasswordMail } from "../services/email-service";
 
 /**
  * login sudo user controller method will be able to set token to in cookies if user hit , Route : POST  /api/sudo-user/login  , access_level : public
@@ -223,4 +226,26 @@ export const logoutSudoUser = expressAsyncHandler(async (_, res: Response) => {
     })
     .status(200)
     .send({ message: "Logout Successfull" });
+});
+
+
+
+export const forgetPassword = expressAsyncHandler(async(req:Request<{} ,{} ,forgetPasswordDto> , res:Response)=>{
+  const {email} = req.body;
+  const validUser = await SudoUser.findOne({ email: email });
+  if(!validUser){
+     res.status(400);
+     throw new Error("No SudoUser Has Found");
+  }
+  const link = generateForgotPasswordLink(validUser);
+  sendForgotPasswordMail(email , link);
+  res.json({
+    data : {
+       status : "email sent successfully"
+    }
+  });
+});
+
+export const resetPassword = expressAsyncHandler(async(req : Request , res:Response)=>{
+    
 });

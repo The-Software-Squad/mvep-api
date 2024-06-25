@@ -2,6 +2,7 @@ import express from "express";
 import {
   createSudoUser,
   deleteSudoUserById,
+  forgetPassword,
   getAllSudoUsers,
   getSudoUserById,
   login,
@@ -17,6 +18,7 @@ SudoUserRouter.get("/", sudoUserAuthMiddleware , getAllSudoUsers);
 SudoUserRouter.post("/", sudoUserAuthMiddleware,roleCapacityMiddleware,createSudoUser);
 SudoUserRouter.post("/login" ,login);
 SudoUserRouter.post("/logout" , logoutSudoUser);
+SudoUserRouter.post("/forgetpassword" , forgetPassword);
 SudoUserRouter.get("/:id", sudoUserAuthMiddleware , roleCapacityIdMiddleware ,getSudoUserById);
 SudoUserRouter.put("/:id",sudoUserAuthMiddleware, roleCapacityMiddleware,updateSudoUserById);
 SudoUserRouter.delete("/:id", sudoUserAuthMiddleware , roleCapacityIdMiddleware,deleteSudoUserById);
