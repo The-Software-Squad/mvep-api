@@ -36,6 +36,12 @@ export interface LoginSudoUserDto{
 export interface forgetPasswordDto{
      email : string;
 }
+
+export interface ResetPasswordDto{
+    token: string;
+    password:string;
+    verify_password : string;
+}
 //Param Types
 
 export interface SudoUserParam {

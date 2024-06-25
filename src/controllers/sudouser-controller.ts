@@ -1,17 +1,19 @@
 import {
   CreateSudoUserDto,
   LoginSudoUserDto,
+  ResetPasswordDto,
   UpdateSudoUserDto,
   forgetPasswordDto,
 } from "../types";
 import { Request, Response } from "express-serve-static-core";
-import expressAsyncHandler = require("express-async-handler");
+import expressAsyncHandler from "express-async-handler";
 import SudoUser, { ISudoUser } from "../models/sudouser-model";
 import generateJwtToken from "../utils/generateToken";
 import getDefaultCapabilitiesByRole from "../utils/getCapabilitiesByRole";
 import logger from "../utils/logger";
 import generateForgotPasswordLink from "../utils/genrateForgetPasswordLink";
 import { sendForgotPasswordMail } from "../services/email-service";
+import jwt from "jsonwebtoken";
 
 /**
  * login sudo user controller method will be able to set token to in cookies if user hit , Route : POST  /api/sudo-user/login  , access_level : public
@@ -246,6 +248,28 @@ export const forgetPassword = expressAsyncHandler(async(req:Request<{} ,{} ,forg
   });
 });
 
-export const resetPassword = expressAsyncHandler(async(req : Request , res:Response)=>{
-    
+export const resetPassword = expressAsyncHandler(async(req : Request<{},{},ResetPasswordDto> , res:Response)=>{
+     const {token , password , verify_password } = req.body;
+     if(!token){
+        throw new Error("token does not exist");
+     }
+     let decoded;
+     try{
+       decoded = jwt.verify(token ,process.env.JWT_SECRET!) as jwt.JwtPayload;
+     }catch(e){
+      res.status(400);
+      throw new Error("Invalid token")
+     }
+     if(verify_password!==password){
+      res.status(400);
+      throw new Error("Please re verify the password");
+     }
+     const sudouserId = decoded.sudouser_id;
+     const sudouser = await SudoUser.findByIdAndUpdate( sudouserId, {password:password});
+     res.json({
+      data:{
+         email :sudouser?.email,
+         update : true
+      }
+     });
 });
