@@ -1,0 +1,21 @@
+meta {
+  name: logout
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{url}}sudo-users/logout
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name" : "dummy",
+    "email" : "dummy@gmail.com",
+    "password" : "password",
+    "phone_number" : "123456789",
+    "role" : 3
+  }
+}
