@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { ROLE_CAPACITIES } from "../constants/capabilities";
 import bcrypt from "bcrypt";
+
 export interface ISudoUser extends mongoose.Document {
   name: string;
   email: string;
@@ -43,9 +44,9 @@ const sudoUserSchema = new mongoose.Schema<ISudoUser>(
       required: true,
       default: 4,
     },
-    capabilities :{
-       type : [String],
-       required:true
+    capabilities: {
+      type: [String],
+      required: true,
     },
     createdBy: {
       type: mongoose.SchemaTypes.ObjectId,

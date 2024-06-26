@@ -152,7 +152,7 @@ export const createSudoUser = expressAsyncHandler(
 );
 
 /**
- * update sudo_user by _id property of sudo_user and to delete a sudo_user , logged in sudo_user should be of appropriate role , route : PUT /api/sudo-user/:id , access_level : private
+ * update sudo_user by _id property of sudo_user and to delete a sudo_user , logged in sudo_user should be of appropriate role , route : PUT /api/sudo-users/:id , access_level : private
  *
  * @param {Request} req Express Request Object
  * @param {Response} res Express Response Object
@@ -167,16 +167,9 @@ export const updateSudoUserById = expressAsyncHandler(
       res.status(400);
       throw new Error("No SudoUser Id was mentioned");
     }
-    const { name, email, phone_number, role, capabilities } = req.body;
     const updatedSudodUser = await SudoUser.findByIdAndUpdate(
       sudoUserIdTobeUpdated,
-      {
-        name: name,
-        email: email,
-        phone_number: phone_number,
-        role: role,
-        capabilities: capabilities,
-      }
+      req.body
     );
     if (!updatedSudodUser) {
       res.status(400);
@@ -185,11 +178,8 @@ export const updateSudoUserById = expressAsyncHandler(
     res.status(200);
     res.json({
       data: {
-        name: name,
-        email: email,
-        phone_number: phone_number,
-        role: role,
-        capabilities: capabilities,
+         email:updatedSudodUser.email,
+         update :true,
       },
     });
     return;
@@ -197,7 +187,7 @@ export const updateSudoUserById = expressAsyncHandler(
 );
 
 /**
- * delete sudo_user by _id property of sudo_user and to delete a sudo_user , logged in sudo_user should be of appropriate role , route : DELETE /api/sudousers/:id , access_level : private
+ * delete sudo_user by _id property of sudo_user and to delete a sudo_user , logged in sudo_user should be of appropriate role , route : DELETE /api/sudo-users/:id , access_level : private
  *
  * @param {Request} req Express Request Object
  * @param {Response} res Express Response Object
@@ -226,6 +216,12 @@ export const deleteSudoUserById = expressAsyncHandler(
   }
 );
 
+/**
+ * logsout the logged in sudo_user by deleting the exisiting cookie a sudo_user , logged in sudo_user should be of appropriate role , route : /api/sudo-users/logout , access_level : private
+ *
+ * @param {Request} req Express Request Object
+ * @param {Response} res Express Response Object
+ */
 export const logoutSudoUser = expressAsyncHandler(async (_, res: Response) => {
   res
     .clearCookie("sudo_user_auth_jwt", {
@@ -236,6 +232,12 @@ export const logoutSudoUser = expressAsyncHandler(async (_, res: Response) => {
     .send({ message: "Logout Successfull" });
 });
 
+/**
+ * send verification mail password of sudo_user route : POST /api/sudo-users/resetpassword , access_level : public
+ *
+ * @param {Request} req Express Request Object
+ * @param {Response} res Express Response Object
+ */
 export const forgetPassword = expressAsyncHandler(
   async (req: Request<{}, {}, forgetPasswordDto>, res: Response) => {
     const { email } = req.body;
@@ -254,6 +256,12 @@ export const forgetPassword = expressAsyncHandler(
   }
 );
 
+/**
+ * reset password of sudo_user route : POST /api/sudo-users/resetpassword , access_level : public
+ *
+ * @param {Request} req Express Request Object
+ * @param {Response} res Express Response Object
+ */
 export const resetPassword = expressAsyncHandler(
   async (req: Request<{}, {}, ResetPasswordDto>, res: Response) => {
     const { token, password, verify_password } = req.body;

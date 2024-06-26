@@ -1,7 +1,13 @@
-import { Request,Response,NextFunction } from "express-serve-static-core";
+import { Request, Response, NextFunction } from "express-serve-static-core";
 import SudoUser from "../models/sudouser-model";
 import expressAsyncHandler from "express-async-handler";
 
+/**
+ * This Middleware Prevents any Operation preformed on higher role from Lower Role (Higher Role : lesser role number , lower Role : Higher Role Number)
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
 async function roleCapacityIDMiddleware(
   req: Request<{ id: string }>,
   res: Response,
@@ -19,7 +25,6 @@ async function roleCapacityIDMiddleware(
   }
   res.status(400);
   throw new Error("Not Capable to Do the Operation");
- 
 }
 
 export default expressAsyncHandler(roleCapacityIDMiddleware);

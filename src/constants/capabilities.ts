@@ -62,7 +62,16 @@ export const noob_caps = [
   GlobalCapabilities.sudo_users.noob.delete,
 ];
 
-export const default_super_admin_caps=[...super_admin_caps,...admin_caps,...creator_caps,...noob_caps,];
-export const default_admin_caps =[...admin_caps,...creator_caps, ...noob_caps];
-export const default_creator_caps =[...creator_caps, ...noob_caps];
-export const default_noob_caps =[...admin_caps];
+export const default_super_admin_caps = [
+  ...super_admin_caps,
+  ...admin_caps,
+  ...creator_caps,
+  ...noob_caps,
+];
+export const default_admin_caps = [
+  ...admin_caps,
+  ...creator_caps,
+  ...noob_caps,
+];
+export const default_creator_caps = [...creator_caps, ...noob_caps];
+export const default_noob_caps = [...admin_caps];
