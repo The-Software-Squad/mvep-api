@@ -1,7 +1,10 @@
-import { Request, Response } from 'express'
-import User from '../models/user-model'
-import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
+import expressAsyncHandler from "express-async-handler";
+import { Request, Response } from 'express-serve-static-core';
+import jwt from "jsonwebtoken";
+import User from '../models/user-model';
+import { sendForgotPasswordMail } from '../services/email-service';
+import generateForgotPasswordLink from '../utils/generatePasswordLink';
+import generateJwtToken from '../utils/generateToken';
 
 /**
  * Fetches all users from the database and returns them in the response.
@@ -11,19 +14,17 @@ import jwt from "jsonwebtoken"
  * 
  * @returns {Promise<void>} Returns a promise that resolves to void.
  */
-export const getAllUsers = async (req: Request, res: Response) => {
-    try {
-        await User.find()
-            .then((data) => {
-                return res.status(200).send({ result: { data: data } })
-            })
-            .catch((err) => {
-                return res.status(400).send({ error: 'Internal Server Error', errorMsg: err })
-            })
-    } catch (err) {
-        return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
+export const getAllUsers = expressAsyncHandler(
+    async (req: Request, res: Response) => {
+        const allUsers = await User.find();
+        res.status(200);
+        res.json({
+            result: {
+                data: allUsers
+            }
+        })
     }
-}
+)
 
 /**
  * Get user by ID.
@@ -34,21 +35,27 @@ export const getAllUsers = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-export const getUserById = async (req: Request, res: Response) => {
-    try {
+export const getUserById = expressAsyncHandler(
+    async (req: Request, res: Response) => {
         const userID = req.params?.id;
         if (!userID) {
-            return res.status(400).send({ 'error': 'Please Provide ID' })
+            res.status(400);
+            throw new Error("User ID required");
         }
         const fetchedUser = await User.findById(userID);
         if (!fetchedUser) {
-            return res.status(404).send({ error: 'User Not Found' })
+            res.status(404);
+            throw new Error("No User Found");
         }
-        return res.status(200).send({ result: { data: fetchedUser } })
-    } catch (err) {
-        return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
+        res.status(200).send(
+            {
+                results: {
+                    data: fetchedUser
+                }
+            }
+        )
     }
-}
+)
 
 /**
  * Create a new user.
@@ -60,33 +67,33 @@ export const getUserById = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-export const createUser = async (req: Request, res: Response) => {
-    try {
+export const createUser = expressAsyncHandler(
+    async (req: Request, res: Response) => {
         const { name, email, password, phoneNumber, cart, wishlist, addresses } = req.body;
         const isExists = await User.findOne({ email: email });
         if (isExists) {
-            return res.status(402).send({ result: { 'message': 'User Already Exists' } });
+            res.status(402);
+            throw new Error("User already exists");
         }
-        const hashedPassword = await bcrypt.hash(password, 10)
-        const newUser = new User({
+        const newUser = await User.create({
             name: name,
             email: email,
-            password: hashedPassword,
+            password: password,
             phoneNumber: phoneNumber,
             cart: cart,
             wishlist: wishlist,
             addresses: addresses,
         })
-        await newUser.save().then((data) => {
-            return res.status(201).send({ result: { 'message': 'User Created Successfull' } })
-        })
-            .catch((err) => {
-                return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
-            })
-    } catch (err) {
-        return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
+        res.status(200);
+        res.json({
+            data: {
+                name: newUser.name,
+                email: newUser.email,
+            },
+        });
+        return;
     }
-}
+)
 
 /**
  * Update user by ID.
@@ -98,18 +105,19 @@ export const createUser = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-export const updateUser = async (req: Request, res: Response) => {
-    try {
+export const updateUser = expressAsyncHandler(
+    async (req: Request, res: Response) => {
         const userId = req?.params?.id;
         const { name, email, phoneNumber, cart, wishlist, addresses } = req.body;
         const validUser = await User.findById(userId);
         if (!validUser) {
-            return res.status(404).send({ result: { 'message': 'No User Found' } });
+            res.status(404)
+            throw new Error("No User Found");
         }
         const updatedCart = cart ? [...validUser.cart, ...cart] : validUser.cart;
         const updatedWishlist = wishlist ? [...validUser.wishlist, ...wishlist] : validUser.wishlist;
         const updatedAddresses = addresses ? [...validUser.addresses, ...addresses] : validUser.addresses;
-        await User.findByIdAndUpdate(userId, {
+        const isUpdated = await User.findByIdAndUpdate(userId, {
             name: name,
             email: email,
             phoneNumber: phoneNumber,
@@ -117,17 +125,20 @@ export const updateUser = async (req: Request, res: Response) => {
             wishlist: updatedWishlist,
             addresses: updatedAddresses
         }, { new: true })
-            .then((data) => {
-                return res.status(200).send({ result: { 'message': 'Updated Successfull' } })
-            })
-            .catch((err) => {
-                return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
-            })
-
-    } catch (err) {
-        return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
+        if (!isUpdated) {
+            res.status(500);
+            throw new Error("User update Failed");
+        }
+        res.status(200);
+        res.json({
+            data: {
+                email: isUpdated.email,
+                update: true,
+            },
+        });
+        return;
     }
-}
+)
 
 /**
  * Delete user by ID.
@@ -138,19 +149,22 @@ export const updateUser = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-export const deleteUser = async (req: Request, res: Response) => {
-    try {
+export const deleteUser = expressAsyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
         const userId = req?.params?.id;
         const validUser = await User.findById(userId);
         if (!validUser) {
-            return res.status(404).send({ result: { 'message': 'No User Found' } });
+            res.status(404);
+            throw new Error("No User Found");
         }
-        await validUser?.deleteOne();
-        return res.status(200).send({ result: { 'message': 'Deleted Successfull' } });
-    } catch (err) {
-        return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
+        const deletedUser = await validUser?.deleteOne();
+        if (!deletedUser) {
+            res.status(400)
+            throw new Error('User Deleted Failed');
+        }
+        res.status(200).send({ result: { 'message': 'Deleted Successfull' } });
     }
-}
+)
 
 /**
  * User Login.
@@ -162,28 +176,34 @@ export const deleteUser = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-export const loginUser = async (req: Request, res: Response) => {
-    try {
+export const loginUser = expressAsyncHandler(
+    async (req: Request, res: Response) => {
         const { email, password } = req.body;
-        const validUser = await User.findOne({ email: email });
+        if (!email && !password) {
+            res.status(400);
+            throw new Error("Incorrect Data format");
+        }
+        const validUser = await User.findOne({ email: email })
         if (!validUser) {
-            return res.status(404).send({ result: { 'message': 'No User Found' } });
+            res.status(404);
+            throw new Error("User Not Found");
         }
-        const isPasswordValid = await bcrypt.compare(password, validUser.password);
-        if (!isPasswordValid) {
-            return res.status(400).json({ error: 'Invalid credentials' });
+        if (!(await validUser.checkPassword(password))) {
+            res.status(400);
+            throw new Error("Invalid Password");
         }
-        //@ts-ignore
-        const token = jwt.sign({ id: validUser?._id, email: validUser?.email }, process.env.JWT_SECRET, { expiresIn: '1d' })
-        return res.cookie('token', token, {
-            httpOnly: true,
-            sameSite: 'strict',
-            maxAge: 24 * 60 * 60 * 1000
-        }).status(200).send({ result: { "message": "Login Successfull" } });
-    } catch (err) {
-        return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
+        generateJwtToken(res, validUser);
+        res.status(200);
+        res.json({
+            data: {
+                email: validUser.email,
+                state: "Logged in",
+            },
+        });
+        return;
+
     }
-}
+)
 
 /**
  * Logout User.
@@ -194,16 +214,15 @@ export const loginUser = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-export const logoutUser = async (req: Request, res: Response) => {
-    try {
-        return res.clearCookie('token', {
+export const logoutUser = expressAsyncHandler(
+    async (_, res: Response): Promise<void> => {
+        res.clearCookie('token', {
             httpOnly: true,
             sameSite: 'strict'
         }).status(200).send({ result: { 'message': 'Logout Successfull' } })
-    } catch (err) {
-        return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
+
     }
-}
+)
 
 /**
  * Forgot Password.
@@ -215,25 +234,23 @@ export const logoutUser = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-export const forgotPassword = async (req: Request, res: Response) => {
-    try {
+export const forgotPassword = expressAsyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
         const { email } = req.body;
         const validUser = await User.findOne({ email: email });
         if (!validUser) {
-            return res.status(404).send({ result: { 'message': 'No User Found' } });
+            res.status(404)
+            throw new Error("User Not Found")
         }
-        //@ts-ignore
-        const token = jwt.sign({ userId: validUser._id, email: validUser.email }, process.env.JWT_SECRET, { expiresIn: '10min' })
-
-        console.log(token)
-
-        //sending the link to email
-        return res.status(200).send({ result: { 'message': 'Password Reset Link Sent Successfull', token: token } });
-
-    } catch (err) {
-        return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
+        const link = generateForgotPasswordLink(validUser);
+        sendForgotPasswordMail(validUser?.email, link);
+        res.status(200).json({
+            data: {
+                status: "Email sent successfully",
+            },
+        })
     }
-}
+)
 
 /**
  * Reset User Password.
@@ -245,31 +262,32 @@ export const forgotPassword = async (req: Request, res: Response) => {
  *
  * @throws {Error} - Throws an error if an unexpected error occurs.
  */
-export const changePassword = async (req: Request, res: Response) => {
-    try {
-        const { password } = req.body;
-        //@ts-ignore
-        const { email } = req.user;
-
-        if (!email) {
-            return res.status(404).send({ result: { 'message': 'Email Required' } });
+export const changePassword = expressAsyncHandler(
+    async (req: Request, res: Response) => {
+        const { token, password, verify_password } = req.body;
+        if (!token) {
+            throw new Error("Token does not exist");
         }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await User.findOneAndUpdate(
-            { email },
-            { password: hashedPassword },
-            { new: true }
-        ).then((data) => {
-            return res.status(200).send({ result: { 'message': 'Password Reset Successfull' } });
-        })
-            .catch(err => {
-                console.log(err);
-                return res.status(500).send({ error: err })
-            })
-
+        let decoded;
+        try {
+            decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload;
+        } catch (e) {
+            res.status(400);
+            throw new Error("Invalid token");
+        }
+        if (verify_password !== password) {
+            res.status(400);
+            throw new Error("Please re verify the password");
+        }
+        const userId = decoded.userId;
+        const user = await User.findByIdAndUpdate(userId, {
+            password: password,
+        });
+        res.json({
+            data: {
+                email: user?.email,
+                update: true,
+            },
+        });
     }
-    catch (err) {
-        return res.status(500).send({ error: 'Internal Server Error', errorMsg: err })
-    }
-}
+);

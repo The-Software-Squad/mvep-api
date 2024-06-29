@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/nodemailer": "6.4.15",
     "bcrypt": "5.1.1",
     "cookie-parser": "1.4.6",
     "cors": "2.8.5",
@@ -19,7 +20,10 @@
     "express-async-handler": "1.2.0",
     "jsonwebtoken": "9.0.2",
     "mongoose": "8.4.3",
-    "nodemon": "3.1.4"
+    "nodemailer": "6.9.14",
+    "nodemon": "3.1.4",
+    "pino": "9.2.0",
+    "pino-pretty": "11.2.1"
   },
   "devDependencies": {
     "@eslint/js": "9.5.0",

@@ -5,14 +5,14 @@ import { verifyPasswordReset } from "../middleware/forgot-middleware";
 
 const userRouter = express.Router();
 
-userRouter.get('/users', getAllUsers)
-userRouter.get('/user/:id', getUserById)
-userRouter.post('/user', createUser)
-userRouter.put('/user/:id', verifyAuth, updateUser)
-userRouter.delete('/user/:id', verifyAuth, deleteUser)
-userRouter.post('/user/login', loginUser)
-userRouter.post('/user/logout', verifyAuth, logoutUser)
-userRouter.post('/user/forgot-password', forgotPassword)
-userRouter.post('/user/reset-password/:token', verifyPasswordReset, changePassword)
+userRouter.get('/', getAllUsers)
+userRouter.get('/:id', getUserById)
+userRouter.post('/', createUser)
+userRouter.put('/:id', verifyAuth, updateUser)
+userRouter.delete('/:id', verifyAuth, deleteUser)
+userRouter.post('/login', loginUser)
+userRouter.post('/logout', verifyAuth, logoutUser)
+userRouter.post('/forgot-password', forgotPassword)
+userRouter.post('/reset-password/:token', verifyPasswordReset, changePassword)
 
 export default userRouter;

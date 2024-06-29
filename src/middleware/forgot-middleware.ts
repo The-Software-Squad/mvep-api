@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken"
-import { Request, Response, NextFunction } from "express"
+import { Request, Response, NextFunction } from "express-serve-static-core"
 
 export const verifyPasswordReset = async (req: Request, res: Response, next: NextFunction) => {
     try {
