@@ -3,8 +3,8 @@ import { Request, Response } from 'express-serve-static-core';
 import jwt from "jsonwebtoken";
 import User from '../models/user-model';
 import { sendForgotPasswordMail } from '../services/email-service';
-import generateForgotPasswordLink from '../utils/generatePasswordLink';
-import generateJwtToken from '../utils/generateToken';
+import { generateUserForgotPasswordLink } from '../utils/genrateForgetPasswordLink';
+import { generateUserJwtToken } from '../utils/generateToken';
 
 /**
  * Fetches all users from the database and returns them in the response.
@@ -192,7 +192,7 @@ export const loginUser = expressAsyncHandler(
             res.status(400);
             throw new Error("Invalid Password");
         }
-        generateJwtToken(res, validUser);
+        generateUserJwtToken(res, validUser);
         res.status(200);
         res.json({
             data: {
@@ -242,7 +242,7 @@ export const forgotPassword = expressAsyncHandler(
             res.status(404)
             throw new Error("User Not Found")
         }
-        const link = generateForgotPasswordLink(validUser);
+        const link = generateUserForgotPasswordLink(validUser);
         sendForgotPasswordMail(validUser?.email, link);
         res.status(200).json({
             data: {
