@@ -1,0 +1,21 @@
+meta {
+  name: update
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://localhost:4000/api/region/:id
+  body: json
+  auth: none
+}
+
+params:path {
+  id: 6682e9287210f77156803ec8
+}
+
+body:json {
+  {
+     "description": "A City in East Godavari alsoeswar is the boss here"
+  }
+}

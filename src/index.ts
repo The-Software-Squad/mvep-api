@@ -8,6 +8,7 @@ import SudoUserRouter from "./routes/sudouser-route";
 
 // Get the env variables.
 import {config} from "dotenv"
+import regionRouter from "./routes/region-route";
 
 config();
 const PORT = process.env.PORT || 4000;
@@ -24,7 +25,7 @@ app.get('/', (req, res) => {
 });
 
 app.use("/api/sudo-users/" , SudoUserRouter);
-
+app.use("/api/region" , regionRouter);
 
 // error middleware
 
