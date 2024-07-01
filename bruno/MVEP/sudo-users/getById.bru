@@ -1,0 +1,25 @@
+meta {
+  name: getById
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{url}}sudo-users/:id
+  body: json
+  auth: none
+}
+
+params:path {
+  id: 
+}
+
+body:json {
+  {
+    "name" : "dummy",
+    "email" : "dummy@gmail.com",
+    "password" : "password",
+    "phone_number" : "123456789",
+    "role" : 3
+  }
+}

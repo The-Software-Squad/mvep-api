@@ -1,5 +1,5 @@
+import nodemailer from "nodemailer";
 import logger from "../utils/logger";
-import nodemailer from "nodemailer"
 
 /**
  * This Function Allows Application to send mail to targetted person
@@ -9,23 +9,23 @@ import nodemailer from "nodemailer"
  */
 
 export async function sendForgotPasswordMail(
-    receiverEmail: string,
-    resetLink: string
+  receiverEmail: string,
+  resetLink: string
 ) {
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        port: 587,
-        auth: {
-            user: process.env.MAIL_SERVICE_USER_MAIL,
-            pass: process.env.MAIL_SERVICE_USER_PASSWORD,
-        },
-    });
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    port: 587,
+    auth: {
+      user: process.env.MAIL_SERVICE_USER_MAIL,
+      pass: process.env.MAIL_SERVICE_USER_PASSWORD,
+    },
+  });
 
-    const info = await transporter.sendMail({
-        from: "eswardev69420@gmail.com",
-        to: receiverEmail,
-        subject: "Endless Store Password Reset",
-        html: `
+  const info = await transporter.sendMail({
+    from: "eswardev69420@gmail.com",
+    to: receiverEmail,
+    subject: "Endless Store Password Reset",
+    html: `
             <div style="font-family: sans-serif; line-height: 1.6; color: #4A5568;">
                 <div style="max-width: 32rem; margin: 0 auto; padding: 1.25rem; border: 1px solid #E2E8F0; border-radius: 0.5rem; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);">
                     <h2 style="color: #3B82F6; text-align: center; font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;">Password Reset Request</h2>
@@ -42,7 +42,7 @@ export async function sendForgotPasswordMail(
                 </div>
             </div>
         `,
-    });
-    logger.info(info.response);
-    return;
+  });
+  logger.info(info.response);
+  return;
 }

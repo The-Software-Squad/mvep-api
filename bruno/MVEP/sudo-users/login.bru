@@ -1,0 +1,18 @@
+meta {
+  name: login
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{url}}sudo-users/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email" : "nani@gmail.com",
+    "password" : "password"
+  }
+}

@@ -8,9 +8,9 @@ import logger from "../utils/logger";
  * @param {NextFunction} next Express Next Function
  */
 export function notFound(req: Request, res: Response, next: NextFunction) {
-    const error = new Error("not Found - " + req.originalUrl);
-    res.status(404);
-    next(error);
+  const error = new Error("not Found - " + req.originalUrl);
+  res.status(404);
+  next(error);
 }
 
 /**
@@ -22,23 +22,23 @@ export function notFound(req: Request, res: Response, next: NextFunction) {
  * @param {NextFunction} next Express Next Function
  */
 export function errorMiddleWare(
-    err: any,
-    req: Request,
-    res: Response,
-    next: NextFunction
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) {
-    let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
 
-    let message = err.message;
-    logger.info("Caught By Middle Ware");
+  let message = err.message;
+  logger.info("Caught By Middle Ware");
 
-    if (err.name === "CastError" && err.kind === "ObjectId") {
-        statusCode = 404;
-        message = "not found";
-    }
+  if (err.name === "CastError" && err.kind === "ObjectId") {
+    statusCode = 404;
+    message = "not found";
+  }
 
-    res.status(statusCode).json({
-        message,
-        stack: process.env.NODE_ENV === "production" ? null : err.stack,
-    });
+  res.status(statusCode).json({
+    message,
+    stack: process.env.NODE_ENV === "production" ? null : err.stack,
+  });
 }
