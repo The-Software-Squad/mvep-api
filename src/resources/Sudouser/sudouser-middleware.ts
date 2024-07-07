@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express-serve-static-core";
-import SudoUser from "./Sudouser-model";
+import SudoUser from "./sudouser-model";
 import expressAsyncHandler from "express-async-handler";
 import { CreateSudoUserDto } from "../../types";
-import  jwt  from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import logger from "../../utils/logger";
 
 /**
@@ -30,8 +30,6 @@ async function roleCapacityIDMiddleware(
   throw new Error("Not Capable to Do the Operation");
 }
 
-
-
 /**
  * This Middleware Prevents any Operation preformed on higher role from Lower Role (Higher Role : lesser role number , lower Role : Higher Role Number)
  * @param {Request} req
@@ -39,21 +37,21 @@ async function roleCapacityIDMiddleware(
  * @param {NextFunction} next
  */
 async function RoleCapacityMiddleWare(
-  req: Request<{}, {},  CreateSudoUserDto>,
+  req: Request<{}, {}, CreateSudoUserDto>,
   res: Response,
   next: NextFunction
 ) {
-
-
   const { role } = req.body;
   const loggedInSudoUser = await SudoUser.findById(req.loggedInSudoUserId);
-  if (loggedInSudoUser?.role! < role || (loggedInSudoUser?.role === 1 && role===1) ){  
+  if (
+    loggedInSudoUser?.role! < role ||
+    (loggedInSudoUser?.role === 1 && role === 1)
+  ) {
     return next();
   }
   res.status(400);
   throw new Error("Not Capable to Do the Operation");
 }
-
 
 /**
  * This Simple MiddleWare Protects API from not Logged in Users
@@ -86,6 +84,12 @@ function sudoUserProtectMiddleWare(
     throw new Error("Invalid token");
   }
 }
-export const sudouserProtectMiddleWare =  expressAsyncHandler(sudoUserProtectMiddleWare);
-export const rolecapacityidMiddleware  = expressAsyncHandler(roleCapacityIDMiddleware)
-export const rolecapacityMiddleware = expressAsyncHandler(RoleCapacityMiddleWare);
+export const sudouserProtectMiddleWare = expressAsyncHandler(
+  sudoUserProtectMiddleWare
+);
+export const rolecapacityidMiddleware = expressAsyncHandler(
+  roleCapacityIDMiddleware
+);
+export const rolecapacityMiddleware = expressAsyncHandler(
+  RoleCapacityMiddleWare
+);
