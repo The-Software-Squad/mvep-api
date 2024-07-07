@@ -22,9 +22,9 @@ export interface CreateSudoUserDto{
 export interface UpdateSudoUserDto{
     name :string;
     email:string;
-    password:string;
     phone_number : string;
     role : 1 | 2 | 3 | 4;
+    password : string;
     capabilities  :string[];
 }
 

@@ -84,12 +84,15 @@ function sudoUserProtectMiddleWare(
     throw new Error("Invalid token");
   }
 }
+
 export const sudouserProtectMiddleWare = expressAsyncHandler(
   sudoUserProtectMiddleWare
 );
+
 export const rolecapacityidMiddleware = expressAsyncHandler(
   roleCapacityIDMiddleware
 );
+
 export const rolecapacityMiddleware = expressAsyncHandler(
   RoleCapacityMiddleWare
 );

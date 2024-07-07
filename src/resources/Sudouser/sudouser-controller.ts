@@ -9,10 +9,9 @@ import {
   ResetPasswordDto,
   UpdateSudoUserDto,
 } from "../../types";
-import generateJwtToken from "../../utils/sudouser-generatetoken";
+import { generateForgotPasswordLink, generateJwtToken } from "./sudouser-utils";
 import getDefaultCapabilitiesByRole from "../../utils/getCapabilitiesByRole";
 import logger from "../../utils/logger";
-import generateForgotPasswordLink from "../../utils/sudouser-forgetpasswordlink";
 import { sendForgotPasswordMail } from "../../services/email-service";
 import jwt from "jsonwebtoken";
 import {
@@ -22,14 +21,17 @@ import {
 } from "./sudouser-middleware";
 import SudoUser from "./sudouser-model";
 
+
 export default class SudouserController implements Controller {
   router: Router = Router();
   path: string = "sudouser";
 
+
   constructor() {
     this.initializeRoutes();
   }
-
+   
+   
   private initializeRoutes(): void {
     this.router.get("/", sudouserProtectMiddleWare, this.getAllSudoUsers);
     this.router.post(
@@ -240,7 +242,7 @@ export default class SudouserController implements Controller {
       return;
     }
   );
-
+ 
   private deleteSudoUserById = expressAsyncHandler(
     async (req: Request<{ id: string }, {}, {}>, res: Response) => {
       const sudoUserIdToBeDeleted = req.params.id;
