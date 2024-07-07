@@ -8,6 +8,7 @@ declare global {
    }
 }
 
+
 // DTO'S :  Data Transfer Objects 
 export interface CreateSudoUserDto{
     name :string;

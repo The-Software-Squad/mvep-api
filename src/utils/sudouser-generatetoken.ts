@@ -1,5 +1,5 @@
 import { Response } from "express-serve-static-core";
-import { ISudoUser } from "../models/sudouser-model";
+import { ISudoUser } from "../resources/Sudouser/sudouser-interface";
 import jwt from "jsonwebtoken";
 function generateJwtToken(res: Response<{}>, user: ISudoUser) {
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
