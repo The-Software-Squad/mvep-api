@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export interface ISudoUser extends mongoose.Document {
+export interface ISudoUser extends mongoose.Document{
   name: string;
   email: string;
   password: string;

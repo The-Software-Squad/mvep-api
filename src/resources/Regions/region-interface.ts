@@ -11,4 +11,4 @@ export interface IRegion extends mongoose.Document {
   description: string;
   createdBy: mongoose.Types.ObjectId;
   polygon: ICoordinate[];
-}
+ }

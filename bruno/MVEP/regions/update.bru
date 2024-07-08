@@ -1,0 +1,21 @@
+meta {
+  name: update
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://localhost:4000/api/region/:id
+  body: json
+  auth: none
+}
+
+params:path {
+  id: 668beb1988963f841496a647
+}
+
+body:json {
+  {
+    "description" : "Our Beach City"
+  }
+}

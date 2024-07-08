@@ -24,7 +24,7 @@ import SudoUser from "./sudouser-model";
 
 export default class SudouserController implements Controller {
   router: Router = Router();
-  path: string = "sudouser";
+  path: string = "sudo-users";
 
 
   constructor() {

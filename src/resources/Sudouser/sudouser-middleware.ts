@@ -66,8 +66,7 @@ function sudoUserProtectMiddleWare(
 ) {
   let token;
   token = req.cookies.sudo_user_auth_jwt;
-  logger.info(req.url);
-  if (!token) {
+   if (!token) {
     res.status(400);
     throw new Error("Cookie Does not Exist");
   }
