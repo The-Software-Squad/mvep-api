@@ -27,7 +27,6 @@ export default class App {
 
   private initilizeControllers(controllers: Controller[]): void {
     controllers.forEach((controller: Controller) => {
-      logger.info("/api/"+controller.path)
       this.app.use("/api/" + controller.path, controller.router);
     });
   }

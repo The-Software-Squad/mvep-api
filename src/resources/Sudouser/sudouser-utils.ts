@@ -25,4 +25,3 @@ export function generateJwtToken(res: Response<{}>, user: ISudoUser) {
     maxAge: 1 * 24 * 60 * 60 * 1000,
   });
 }
-

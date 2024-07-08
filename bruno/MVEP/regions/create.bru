@@ -1,0 +1,22 @@
+meta {
+  name: create
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:4000/api/region/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name" : "vizag",
+    "description" : "Beach City",
+    "polygon" : [
+      {"lat" : 147.7309127 , "lng": -8.000},
+      {"lat" : 147.7309127 , "lng": -8.000}
+    ]
+  }
+}
