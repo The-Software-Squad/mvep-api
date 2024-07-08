@@ -43,8 +43,16 @@ export interface ResetPasswordDto{
     password:string;
     verify_password : string;
 }
-//Param Types
 
+export interface CreateRegionDto {
+  name: string;
+  description: string;
+  polygon: { lat: number; lng: number }[];
+}
+export type UpdateRegionDto =  Partial<CreateRegionDto>
+
+
+//Param Types
 export interface SudoUserParam {
      id:string
 };
