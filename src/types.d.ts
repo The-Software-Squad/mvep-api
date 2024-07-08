@@ -8,6 +8,7 @@ declare global {
    }
 }
 
+
 // DTO'S :  Data Transfer Objects 
 export interface CreateSudoUserDto{
     name :string;
@@ -21,9 +22,9 @@ export interface CreateSudoUserDto{
 export interface UpdateSudoUserDto{
     name :string;
     email:string;
-    password:string;
     phone_number : string;
     role : 1 | 2 | 3 | 4;
+    password : string;
     capabilities  :string[];
 }
 
@@ -42,8 +43,16 @@ export interface ResetPasswordDto{
     password:string;
     verify_password : string;
 }
-//Param Types
 
+export interface CreateRegionDto {
+  name: string;
+  description: string;
+  polygon: { lat: number; lng: number }[];
+}
+export type UpdateRegionDto =  Partial<CreateRegionDto>
+
+
+//Param Types
 export interface SudoUserParam {
      id:string
 };

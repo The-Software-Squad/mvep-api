@@ -1,37 +1,11 @@
-import express from "express";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import { notFound,errorMiddleWare } from "./middleware/error-middleware";
-import logger from "./utils/logger";
-import { connectDB } from "./services/database-service";
-import SudoUserRouter from "./routes/sudouser-route";
+import App from "./app";
+import RegionController from "./resources/Regions/region-controller";
+import SudouserController from "./resources/Sudouser/sudouser-controller";
+import { Controller } from "./utils/interfaces/controller-interface";
+import {config} from "dotenv";
 
-// Get the env variables.
-import {config} from "dotenv"
+config(); 
 
-config();
-const PORT = process.env.PORT || 4000;
-
-// Define the express app.
-const app = express();
-app.use(cors());
-app.use(cookieParser());
-app.use(express.json());
-
-// Add the routes.
-app.get('/', (req, res) => {
-  res.send('MVEP API');
-});
-
-app.use("/api/sudo-users/" , SudoUserRouter);
-
-
-// error middleware
-
-app.use(notFound);
-app.use(errorMiddleWare);
-
-app.listen(PORT, () => {
-  connectDB();
-  logger.info(`start the server http://localhost:${PORT}`)
-});
+const controllers :Controller[] =[new SudouserController() , new RegionController()]; 
+const app = new App(controllers , Number(process.env.PORT));
+app.listen();
