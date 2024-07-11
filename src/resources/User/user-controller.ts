@@ -8,6 +8,7 @@ import { generateUserForgotPasswordLink, generateUserJwtToken } from "./user-uti
 import { sendForgotPasswordMail } from "../../services/email-service";
 import { verifyAuth } from "./user-middleware";
 import { verifyPasswordReset } from "../../middleware/forgot-middleware";
+import { verifySuperAdmin } from "../../middleware/permissions-middleware";
 
 export default class UserController implements Controller {
     router: Router = Router();
@@ -18,7 +19,7 @@ export default class UserController implements Controller {
     }
 
     private initializeRoutes(): void {
-        this.router.get('/', this.getAllUsers)
+        this.router.get('/', verifySuperAdmin,this.getAllUsers)
         this.router.get('/:id', this.getUserById)
         this.router.post('/', this.createUser)
         this.router.put('/:id', verifyAuth, this.updateUser)
