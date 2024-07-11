@@ -3,7 +3,8 @@ import { Controller } from "../../utils/interfaces/controller-interface";
 import expressAsyncHandler from "express-async-handler";
 import { Request, Response } from "express-serve-static-core";
 import Address from "./address-model";
-import { verifySuperAdmin } from "./address-middleware";
+import { verifySuperAdmin } from "../../middleware/permissions-middleware";
+
 
 
 
