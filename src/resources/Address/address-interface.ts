@@ -1,3 +1,4 @@
+import { JwtPayload } from "jsonwebtoken";
 import mongoose, { Document } from "mongoose";
 
 interface Location {

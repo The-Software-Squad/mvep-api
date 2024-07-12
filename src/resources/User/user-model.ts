@@ -29,7 +29,8 @@ const userSchema = new mongoose.Schema<IUser>({
         default: []
     },
     addresses: {
-        type: [{}],
+        type: [mongoose.Schema.Types.ObjectId],
+        ref:'Address',
         default: []
     },
     createdAt: {

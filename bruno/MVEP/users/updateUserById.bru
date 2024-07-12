@@ -1,0 +1,22 @@
+meta {
+  name: updateUserById
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{url}}user/66758b9891f947ae7f4f5f34
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "cart":[
+      {
+        "itemName":"IphoneX",
+        "price":"20000"
+      }
+    ]
+  }
+}

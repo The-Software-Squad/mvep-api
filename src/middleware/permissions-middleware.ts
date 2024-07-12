@@ -6,7 +6,7 @@ export const verifySuperAdmin = expressAsyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const loggedInSudoUser = await SudoUser.findById(req.loggedInSudoUserId);
         if (!loggedInSudoUser) {
-            res.json(400);
+            res.status(400);
             throw new Error("Sudo user is not logged in");
         }
         if (loggedInSudoUser?.role !== 1) {

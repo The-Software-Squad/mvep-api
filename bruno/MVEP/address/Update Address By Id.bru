@@ -1,0 +1,19 @@
+meta {
+  name: Update Address By Id
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{url}}address/6690d45f8102ba5718734c86
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "state":"Andhra Pradesh",
+    "zip":"533453",
+    "isDefault":true
+  }
+}

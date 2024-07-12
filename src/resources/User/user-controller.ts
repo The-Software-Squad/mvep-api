@@ -9,6 +9,8 @@ import { sendForgotPasswordMail } from "../../services/email-service";
 import { verifyAuth } from "./user-middleware";
 import { verifyPasswordReset } from "../../middleware/forgot-middleware";
 import { verifySuperAdmin } from "../../middleware/permissions-middleware";
+import { sudouserProtectMiddleWare } from "../Sudouser/sudouser-middleware";
+import bcrypt from "bcrypt"
 
 export default class UserController implements Controller {
     router: Router = Router();
@@ -19,7 +21,7 @@ export default class UserController implements Controller {
     }
 
     private initializeRoutes(): void {
-        this.router.get('/', verifySuperAdmin,this.getAllUsers)
+        this.router.get('/', sudouserProtectMiddleWare, verifySuperAdmin,this.getAllUsers)
         this.router.get('/:id', this.getUserById)
         this.router.post('/', this.createUser)
         this.router.put('/:id', verifyAuth, this.updateUser)
@@ -27,7 +29,7 @@ export default class UserController implements Controller {
         this.router.post('/login', this.loginUser)
         this.router.post('/logout', verifyAuth, this.logoutUser)
         this.router.post('/forgot-password', this.forgotPassword)
-        this.router.post('/reset-password/:token', verifyPasswordReset, this.changePassword)
+        this.router.post('/reset-password', verifyPasswordReset, this.changePassword)
     }
 
     private getAllUsers = expressAsyncHandler(
@@ -175,7 +177,7 @@ export default class UserController implements Controller {
 
     private logoutUser = expressAsyncHandler(
         async (_, res: Response): Promise<void> => {
-            res.clearCookie('token', {
+            res.clearCookie('user_token', {
                 httpOnly: true,
                 sameSite: 'strict'
             }).status(200).send({ result: { 'message': 'Logout Successfull' } })
@@ -219,8 +221,9 @@ export default class UserController implements Controller {
                 throw new Error("Please re verify the password");
             }
             const userId = decoded.userId;
+            const hashedPassword = await bcrypt.hash(password,10);
             const user = await User.findByIdAndUpdate(userId, {
-                password: password,
+                password: hashedPassword,
             });
             res.json({
                 data: {

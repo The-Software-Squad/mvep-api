@@ -1,0 +1,29 @@
+meta {
+  name: Create Address
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{url}}address
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "createdBy":"668ff65c49d6d8547222578b",
+    "name":"Home",
+    "doorNo":"4-176/1",
+    "email":"test@gmail.com",
+    "phone":"76599645868",
+    "street":"4th street",
+    "city":"Malikipuram",
+    "state":"Andhra Pradhes",
+    "zip":"533253",
+    "isDefault":true,
+    "additionalInstructions":"PLease be fast enough",
+    "coordinates":["-127.256","124.256"]
+    
+  }
+}

@@ -1,5 +1,6 @@
-import mongoose from "mongoose"
+import mongoose, { CallbackError } from "mongoose"
 import { UserAddress } from "./address-interface"
+import User from "../User/user-model";
 
 export const addressSchema = new mongoose.Schema<UserAddress>({
     createdBy: {
@@ -39,7 +40,14 @@ export const addressSchema = new mongoose.Schema<UserAddress>({
 
 }, { collection: "addresses", timestamps: true })
 
-
+addressSchema.post('save', async function (doc, next) {
+    try {
+        await User.findByIdAndUpdate(doc.createdBy, { $push: { addresses: doc._id } });
+        next();
+    } catch (error) {
+        next(error as CallbackError);
+    }
+});
 const Address = mongoose.model('Address', addressSchema);
 
 export default Address;
