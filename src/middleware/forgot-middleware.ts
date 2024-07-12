@@ -1,14 +1,14 @@
-import jwt from "jsonwebtoken"
-import { Request, Response, NextFunction } from "express-serve-static-core"
+import { NextFunction, Request, Response } from "express-serve-static-core";
+import jwt from "jsonwebtoken";
 
 export const verifyPasswordReset = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { token } = req.params;
+        const { token } = req.body;
 
         if (!token) {
             return res.status(401).json({ message: "UnAuthorized" });
         }
-        await jwt.verify(token, process.env.JWT_SECRET!, (err, decoded) => {
+        jwt.verify(token, process.env.JWT_SECRET!, (err:any, decoded:any) => {
             if (err) {
                 if (err.name === 'TokenExpiredError') {
                     return res.status(401).send({ error: "Token has expired" });
