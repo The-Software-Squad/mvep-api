@@ -6,7 +6,7 @@ export interface IUser extends mongoose.Document {
     password: string;
     phoneNumber: string;
     cart: [],
-    wishlist: [],
+    wishlist: [mongoose.Schema.Types.ObjectId],
     addresses: [],
     updatedAt: Date;
     createdAt: Date;
